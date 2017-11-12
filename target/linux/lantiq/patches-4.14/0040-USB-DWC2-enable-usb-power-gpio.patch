@@ -8,18 +8,12 @@
  #include <linux/platform_device.h>
  #include <linux/phy/phy.h>
  #include <linux/platform_data/s3c-hsotg.h>
-@@ -544,6 +545,7 @@ static int dwc2_driver_probe(struct plat
+@@ -358,6 +359,17 @@ static int dwc2_driver_probe(struct plat
  	struct dwc2_hsotg *hsotg;
  	struct resource *res;
  	int retval;
 +	int gpio_count;	
- 
- 	match = of_match_device(dwc2_of_match_table, &dev->dev);
- 	if (match && match->data) {
-@@ -562,6 +564,16 @@ static int dwc2_driver_probe(struct plat
- 		defparams.dma_desc_fs_enable = 0;
- 	}
- 
++
 +	gpio_count = of_gpio_count(dev->dev.of_node);
 +	while (gpio_count > 0) {
 +		enum of_gpio_flags flags;
@@ -29,7 +23,6 @@
 +		dev_info(&dev->dev, "requested GPIO %d\n", gpio);
 +		gpio_direction_output(gpio, (flags & OF_GPIO_ACTIVE_LOW) ? (0) : (1));
 +	}
-+
+ 
  	hsotg = devm_kzalloc(&dev->dev, sizeof(*hsotg), GFP_KERNEL);
  	if (!hsotg)
- 		return -ENOMEM;

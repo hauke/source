@@ -21,110 +21,58 @@ Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
  drivers/usb/dwc2/platform.c | 46 ++++++++++++++++++++++++++++++++++++++-------
  1 file changed, 39 insertions(+), 7 deletions(-)
 
---- a/drivers/usb/dwc2/platform.c
-+++ b/drivers/usb/dwc2/platform.c
-@@ -151,7 +151,38 @@ static const struct dwc2_core_params par
- 	.hibernation			= -1,
- };
+--- a/drivers/usb/dwc2/params.c
++++ b/drivers/usb/dwc2/params.c
+@@ -83,7 +83,14 @@ static void dwc2_set_rk_params(struct dw
+ 		GAHBCFG_HBSTLEN_SHIFT;
+ }
  
--static const struct dwc2_core_params params_ltq = {
-+static const struct dwc2_core_params params_danube = {
-+	.otg_cap			= 2,	/* non-HNP/non-SRP */
-+	.otg_ver			= -1,
-+	.dma_enable			= -1,
-+	.dma_desc_enable		= -1,
-+	.dma_desc_fs_enable		= -1,
-+	.speed				= -1,
-+	.enable_dynamic_fifo		= -1,
-+	.en_multiple_tx_fifo		= -1,
-+	.host_rx_fifo_size		= -1,
-+	.host_nperio_tx_fifo_size	= -1,
-+	.host_perio_tx_fifo_size	= -1,
-+	.max_transfer_size		= -1,
-+	.max_packet_count		= -1,
-+	.host_channels			= -1,
-+	.phy_type			= -1,
-+	.phy_utmi_width			= -1,
-+	.phy_ulpi_ddr			= -1,
-+	.phy_ulpi_ext_vbus		= -1,
-+	.i2c_enable			= -1,
-+	.ulpi_fs_ls			= -1,
-+	.host_support_fs_ls_low_power	= -1,
-+	.host_ls_low_power_phy_clk	= -1,
-+	.ts_dline			= -1,
-+	.reload_ctl			= -1,
-+	.ahbcfg				= -1,
-+	.uframe_sched			= -1,
-+	.external_id_pin_ctl		= -1,
-+	.hibernation			= -1,
-+};
+-static void dwc2_set_ltq_params(struct dwc2_hsotg *hsotg)
++static void dwc2_set_ltq_danube_params(struct dwc2_hsotg *hsotg)
++{
++	struct dwc2_core_params *p = &hsotg->params;
 +
-+static const struct dwc2_core_params params_ase = {
- 	.otg_cap			= 2,	/* non-HNP/non-SRP */
- 	.otg_ver			= -1,
- 	.dma_enable			= -1,
-@@ -163,8 +194,8 @@ static const struct dwc2_core_params par
- 	.host_rx_fifo_size		= 288,	/* 288 DWORDs */
- 	.host_nperio_tx_fifo_size	= 128,	/* 128 DWORDs */
- 	.host_perio_tx_fifo_size	= 96,	/* 96 DWORDs */
--	.max_transfer_size		= 65535,
--	.max_packet_count		= 511,
-+	.max_transfer_size		= -1,
-+	.max_packet_count		= -1,
- 	.host_channels			= -1,
- 	.phy_type			= -1,
- 	.phy_utmi_width			= -1,
-@@ -176,8 +207,37 @@ static const struct dwc2_core_params par
- 	.host_ls_low_power_phy_clk	= -1,
- 	.ts_dline			= -1,
- 	.reload_ctl			= -1,
--	.ahbcfg				= GAHBCFG_HBSTLEN_INCR16 <<
--					  GAHBCFG_HBSTLEN_SHIFT,
-+	.ahbcfg				= -1,
-+	.uframe_sched			= -1,
-+	.external_id_pin_ctl		= -1,
-+	.hibernation			= -1,
-+};
++	p->otg_cap = 2;
++}
 +
-+static const struct dwc2_core_params params_xrx200 = {
-+	.otg_cap			= 2,	/* non-HNP/non-SRP */
-+	.otg_ver			= -1,
-+	.dma_enable			= -1,
-+	.dma_desc_enable		= -1,
-+	.speed				= -1,
-+	.enable_dynamic_fifo		= -1,
-+	.en_multiple_tx_fifo		= -1,
-+	.host_rx_fifo_size		= 288,	/* 288 DWORDs */
-+	.host_nperio_tx_fifo_size	= 128,	/* 128 DWORDs */
-+	.host_perio_tx_fifo_size	= 136,	/* 136 DWORDs */
-+	.max_transfer_size		= -1,
-+	.max_packet_count		= -1,
-+	.host_channels			= -1,
-+	.phy_type			= -1,
-+	.phy_utmi_width			= -1,
-+	.phy_ulpi_ddr			= -1,
-+	.phy_ulpi_ext_vbus		= -1,
-+	.i2c_enable			= -1,
-+	.ulpi_fs_ls			= -1,
-+	.host_support_fs_ls_low_power	= -1,
-+	.host_ls_low_power_phy_clk	= -1,
-+	.ts_dline			= -1,
-+	.reload_ctl			= -1,
-+	.ahbcfg				= -1,
- 	.uframe_sched			= -1,
- 	.external_id_pin_ctl		= -1,
- 	.hibernation			= -1,
-@@ -515,8 +575,11 @@ static const struct of_device_id dwc2_of
- 	{ .compatible = "brcm,bcm2835-usb", .data = &params_bcm2835 },
- 	{ .compatible = "hisilicon,hi6220-usb", .data = &params_hi6220 },
- 	{ .compatible = "rockchip,rk3066-usb", .data = &params_rk3066 },
--	{ .compatible = "lantiq,arx100-usb", .data = &params_ltq },
--	{ .compatible = "lantiq,xrx200-usb", .data = &params_ltq },
-+	{ .compatible = "lantiq,danube-usb", .data = &params_danube },
-+	{ .compatible = "lantiq,ase-usb", .data = &params_ase },
-+	{ .compatible = "lantiq,arx100-usb", .data = &params_ase },
-+	{ .compatible = "lantiq,xrx200-usb", .data = &params_xrx200 },
-+	{ .compatible = "lantiq,xrx300-usb", .data = &params_xrx200 },
- 	{ .compatible = "snps,dwc2", .data = NULL },
- 	{ .compatible = "samsung,s3c6400-hsotg", .data = NULL},
- 	{ .compatible = "amlogic,meson8b-usb", .data = &params_amlogic },
++static void dwc2_set_ltq_ase_params(struct dwc2_hsotg *hsotg)
+ {
+ 	struct dwc2_core_params *p = &hsotg->params;
+ 
+@@ -91,12 +98,20 @@ static void dwc2_set_ltq_params(struct d
+ 	p->host_rx_fifo_size = 288;
+ 	p->host_nperio_tx_fifo_size = 128;
+ 	p->host_perio_tx_fifo_size = 96;
+-	p->max_transfer_size = 65535;
+-	p->max_packet_count = 511;
+ 	p->ahbcfg = GAHBCFG_HBSTLEN_INCR16 <<
+ 		GAHBCFG_HBSTLEN_SHIFT;
+ }
+ 
++static void dwc2_set_ltq_xrx200_params(struct dwc2_hsotg *hsotg)
++{
++	struct dwc2_core_params *p = &hsotg->params;
++
++	p->otg_cap = 2;
++	p->host_rx_fifo_size = 288;
++	p->host_nperio_tx_fifo_size = 128;
++	p->host_perio_tx_fifo_size = 136;
++}
++
+ static void dwc2_set_amlogic_params(struct dwc2_hsotg *hsotg)
+ {
+ 	struct dwc2_core_params *p = &hsotg->params;
+@@ -140,8 +155,11 @@ const struct of_device_id dwc2_of_match_
+ 	{ .compatible = "brcm,bcm2835-usb", .data = dwc2_set_bcm_params },
+ 	{ .compatible = "hisilicon,hi6220-usb", .data = dwc2_set_his_params  },
+ 	{ .compatible = "rockchip,rk3066-usb", .data = dwc2_set_rk_params },
+-	{ .compatible = "lantiq,arx100-usb", .data = dwc2_set_ltq_params },
+-	{ .compatible = "lantiq,xrx200-usb", .data = dwc2_set_ltq_params },
++	{ .compatible = "lantiq,danube-usb", .data = &dwc2_set_ltq_danube_params },
++	{ .compatible = "lantiq,ase-usb", .data = &dwc2_set_ltq_ase_params },
++	{ .compatible = "lantiq,arx100-usb", .data = &dwc2_set_ltq_ase_params },
++	{ .compatible = "lantiq,xrx200-usb", .data = &dwc2_set_ltq_xrx200_params },
++	{ .compatible = "lantiq,xrx300-usb", .data = &dwc2_set_ltq_xrx200_params },
+ 	{ .compatible = "snps,dwc2" },
+ 	{ .compatible = "samsung,s3c6400-hsotg" },
+ 	{ .compatible = "amlogic,meson8-usb",
