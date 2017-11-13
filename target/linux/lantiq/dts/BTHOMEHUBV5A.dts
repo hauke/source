@@ -8,7 +8,7 @@
 	model = "BTHOMEHUBV5A - BT Home Hub 5A";
 
 	chosen {
-		bootargs = "console=ttyLTQ0,115200";
+		bootargs = "console=ttyLTQ0,115200 nosmp";
 	};
 
 	aliases {
@@ -109,17 +109,30 @@
 			};
 		};
 
-		ifxhcd@E101000 {
+		usb@E101000 {
 			status = "okay";
-			gpios = <&gpio 33 GPIO_ACTIVE_HIGH>;
 		};
 	};
 
-	gphy-xrx200 {
-		compatible = "lantiq,phy-xrx200";
-		firmware1 = "lantiq/vr9_phy11g_a1x.bin";	/*VR9 1.1*/
-		firmware2 = "lantiq/vr9_phy11g_a2x.bin";	/*VR9 1.2*/
-		phys = [ 00 01 ];
+	usb_vbus: regulator-usb-vbus {
+		compatible = "regulator-fixed";
+
+		regulator-name = "USB_VBUS";
+
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+
+		gpio = <&gpio 33 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+	};
+
+	sram@1F000000 {
+		rcu0: rcu@203000 {
+			usb_phy0: usb2-phy@18 {
+				status = "okay";
+				phy-supply = <&usb_vbus>;
+			};
+		};
 	};
 
 	gpio-keys-polled {
