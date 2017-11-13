@@ -218,7 +218,9 @@ static unsigned int ptm_poll(int ndev, unsigned int work_to_do)
             skb->dev = g_net_dev[0];
             skb->protocol = eth_type_trans(skb, skb->dev);
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,11,0))
             g_net_dev[0]->last_rx = jiffies;
+#endif
 
             netif_receive_skb(skb);
 

@@ -821,7 +821,11 @@ struct sk_buff* atm_alloc_tx(struct atm_vcc *vcc, unsigned int size)
 		return NULL;
 	}
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,13,0))
+	refcount_add(skb->truesize, &sk_atm(vcc)->sk_wmem_alloc);
+#else
 	atomic_add(skb->truesize, &sk_atm(vcc)->sk_wmem_alloc);
+#endif
 
 	return skb;
 }
@@ -889,8 +893,13 @@ static struct sk_buff* skb_break_away_from_protocol(struct sk_buff *skb)
 
 	skb_dst_drop(new_skb);
 #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,11,0))
+	nf_conntrack_put(skb_nfct(new_skb));
+	new_skb->_nfct = 0;
+#else
 	nf_conntrack_put(new_skb->nfct);
 	new_skb->nfct = NULL;
+#endif
   #ifdef CONFIG_BRIDGE_NETFILTER
 	nf_bridge_put(new_skb->nf_bridge);
 	new_skb->nf_bridge = NULL;
