@@ -259,17 +259,24 @@
 			phy-names = "usb2-phy";
 		};
 
-		eth0: eth@E108000 {
+		eth0: eth@E10B100 {
 			#address-cells = <1>;
 			#size-cells = <0>;
 			compatible = "lantiq,xrx200-net";
-			reg = <	0xE108000 0x3000 /* switch */
-				0xE10B100 0x70 /* mdio */
+			reg = <	0xE10B100 0x70 /* mdio */
 				0xE10B1D8 0x30 /* mii */
 				0xE10B308 0x30 /* pmac */
 			>;
 			interrupt-parent = <&icu0>;
 			interrupts = <75 73 72>;
+			lantiq,phys = <&gphy0>, <&gphy1>;
+		};
+
+		gswip: gswip@E108000 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			compatible = "lantiq,xrx200-gswip";
+			reg = <	0xE108000 0x3000>;
 			resets = <&reset0 21 16>, <&reset0 8 8>;
 			reset-names = "switch", "ppe";
 			lantiq,phys = <&gphy0>, <&gphy1>;
