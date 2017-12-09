@@ -230,28 +230,6 @@
 		speed = <1000>;
 		full-duplex;
 	};
-
-	mdio@0 {
-		#address-cells = <1>;
-		#size-cells = <0>;
-		compatible = "lantiq,xrx200-mdio";
-
-		phy0: ethernet-phy@0 {
-			reg = <0x0>;
-		};
-		phy1: ethernet-phy@1 {
-			reg = <0x1>;
-		};
-		phy5: ethernet-phy@5 {
-			reg = <0x5>;
-		};
-		phy11: ethernet-phy@11 {
-			reg = <0x11>;
-		};
-		phy13: ethernet-phy@13 {
-			reg = <0x13>;
-		};
-	};
 };
 
 &gswip {
@@ -296,10 +274,32 @@
 			phy-handle = <&phy5>;
 		};
 
-		port@ff {
-			reg = <0xff>;
+		port@6 {
+			reg = <0x6>;
 			label = "cpu";
 			ethernet = <&eth0>;
+		};
+	};
+
+	mdio@0 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		compatible = "lantiq,xrx200-mdio";
+
+		phy0: ethernet-phy@0 {
+			reg = <0x0>;
+		};
+		phy1: ethernet-phy@1 {
+			reg = <0x1>;
+		};
+		phy5: ethernet-phy@5 {
+			reg = <0x5>;
+		};
+		phy11: ethernet-phy@11 {
+			reg = <0x11>;
+		};
+		phy13: ethernet-phy@13 {
+			reg = <0x13>;
 		};
 	};
 };
