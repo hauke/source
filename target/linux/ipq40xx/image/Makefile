@@ -19,8 +19,10 @@ define Build/ipq-aux-loader-common
 	$(MAKE) -C ipq-aux-loader \
 		PKG_BUILD_DIR="$@.src" \
 		TARGET_DIR="$(dir $@)" LOADER_NAME="$(notdir $@)" \
+		TEXT_BASE2="0x00000000" \
 		BOARD="$(BOARDNAME)" PLATFORM="$(PLATFORM)" \
 		BLOCKSIZE="$(BLOCKSIZE)" PAGESIZE="$(PAGESIZE)" \
+		UART="$(AUX_LOADER_UART)"	\
 		$(1) LOADER_TYPE=$(2) compile loader.$(2)
 	mv "$@.$(2)" "$@"
 	rm -rf $@.src
@@ -307,23 +309,20 @@ TARGET_DEVICES += meraki_mr33
 
 define Device/MikrotikNAND
 	$(call Device/FitImageLzma)
+	$(call Device/UbiFit)
 	BLOCKSIZE := 256k
 	PAGESIZE := 4096
 	KERNEL_INITRAMFS_SUFFIX := -fit-uImage.elf
 	PLATFORM := mikrotik-ipq4xxx
-	KERNEL_INITRAMFS = $$(KERNEL) | ipq-aux-loader-kernel elf
-	IMAGES := sysupgrade.bin
-	IMAGE/sysupgrade.bin/squashfs := append-kernel | ipq-aux-loader-kernel ubi | \
-		sysupgrade-tar kernel=$$$$@ | append-metadata
+	KERNEL = kernel-bin | lzma | fit lzma $$(DTS_DIR)/$$(DEVICE_DTS).dtb | ipq-aux-loader-kernel elf
 	DEVICE_PACKAGES := rbcfg
 endef
 
 define Device/mikrotik_rb450gx4
 	$(call Device/MikrotikNAND)
 	DEVICE_DTS := qcom-ipq4019-rb450gx4
+	AUX_LOADER_UART := 1
 	DEVICE_TITLE := MikroTik RouterBOARD RB450Gx4
-	BLOCKSIZE := 256k
-	PAGESIZE := 4096
 	DEVICE_PACKAGES += kmod-gpio-beeper -kmod-ath10k-ct -ath10k-firmware-qca4019-ct -wpad-basic
 endef
 TARGET_DEVICES += mikrotik_rb450gx4
