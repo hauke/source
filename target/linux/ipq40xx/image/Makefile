@@ -313,9 +313,10 @@ define Device/MikrotikNAND
 	PAGESIZE := 4096
 	KERNEL_INITRAMFS_SUFFIX := -fit-uImage.elf
 	PLATFORM := mikrotik-ipq4xxx
-	KERNEL = kernel-bin | lzma | fit lzma $$(DTS_DIR)/$$(DEVICE_DTS).dtb | ipq-aux-loader-kernel elf
+	KERNEL_INITRAMFS = $$(KERNEL) | ipq-aux-loader-kernel elf
 	IMAGES := sysupgrade.bin
-	IMAGE/sysupgrade.bin/squashfs := append-kernel | ipq-aux-loader-kernel ubi | sysupgrade-tar kernel=$$$$@ | append-metadata
+	IMAGE/sysupgrade.bin/squashfs := append-kernel | ipq-aux-loader-kernel ubi | \
+			sysupgrade-tar kernel=$$$$@ | append-metadata
 	DEVICE_PACKAGES := rbcfg
 endef
 
