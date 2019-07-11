@@ -101,7 +101,7 @@
 		};
 
 		ess-switch@c000000 {
-			status = "okay";
+			/* status = "okay"; */
 		};
 
 		edma@c080000 {
