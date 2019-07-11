@@ -179,6 +179,8 @@ void loader_main(u32 head_text_base, u32 _arch)
 	uint32_t *_magic = (void*)_kernel_data_start;
 	u32 magic;
 	int ret = -100;
+	unsigned int *kernel_code;
+	int i;
 
 	/* compiler optimization barrier needed for GCC >= 3.4 */
 	__asm__ __volatile__("": : :"memory");
@@ -226,8 +228,15 @@ void loader_main(u32 head_text_base, u32 _arch)
 	}
 
 	printf("Starting kernel at 0x%08x\n", kernel_entry);
+	kernel_code = kernel_entry;
+	for (i = 0; i < 16; i++) {
+		debug("Kernel code: 0x%08X\n", kernel_code[i]);
+	}
+
 	printf("\n");
 	cleanup_before_linux();
+	printf("cleared\n");
 	kernel_entry(kernel_p0, kernel_p1, kernel_p2);
+	printf("start failed\n");
 	reset_cpu(0);
 }
