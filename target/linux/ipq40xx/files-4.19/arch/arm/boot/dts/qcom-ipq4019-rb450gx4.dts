@@ -99,7 +99,7 @@
 		};
 
 		ess-switch@c000000 {
-			/* status = "okay"; */
+			status = "okay";
 		};
 
 		edma@c080000 {
@@ -171,7 +171,7 @@
 &blsp1_spi1 {
 	pinctrl-0 = <&spi_0_pins>;
 	pinctrl-names = "default";
-	cs-gpios = <&tlmm 12 GPIO_ACTIVE_HIGH>;
+	cs-gpios = <&tlmm 54 GPIO_ACTIVE_HIGH>;
 	status = "okay";
 
 	m25p80@0 {
