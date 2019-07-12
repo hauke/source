@@ -47,8 +47,6 @@
 
 		mdio@90000 {
 			status = "okay";
-			qcom,mdio_offset = <0x18>;
-			qcom,mdio_offset_limit = <0x5>;
 		};
 
 		ess-psgmii@98000 {
@@ -145,34 +143,24 @@
 &tlmm {
 	serial_pins: serial_pinmux {
 		mux {
-			pins = "gpio16", "gpio17";
+			pins = "gpio60", "gpio61";
 			function = "blsp_uart0";
 			bias-disable;
 		};
 	};
 
-	spi_0_pins: spi-0-pinmux {
-		pinmux {
+	spi_0_pins: spi_0_pinmux {
+		pin {
 			function = "blsp_spi0";
-			pins = "gpio13", "gpio14", "gpio15";
+			pins = "gpio54", "gpio55", "gpio56", "gpio57";
 			bias-disable;
 		};
-
-		pinmux_cs {
+		pin_cs {
 			function = "gpio";
-			pins = "gpio12";
+			pins = "gpio54";
 			bias-disable;
 			output-high;
 		};
-	};
-
-	nand_pins: nand-pins {
-		pins = "gpio53", "gpio55", "gpio56",
-				"gpio57", "gpio58", "gpio59",
-				"gpio60", "gpio62", "gpio63",
-				"gpio64", "gpio65", "gpio66",
-				"gpio67", "gpio68", "gpio69";
-		function = "qpic";
 	};
 };
 
@@ -235,30 +223,6 @@
 
 &cryptobam {
 	status = "okay";
-};
-
-&nand {
-	pinctrl-0 = <&nand_pins>;
-	pinctrl-names = "default";
-	status = "okay";
-
-	nand@0 {
-		partitions {
-			compatible = "fixed-partitions";
-			#address-cells = <1>;
-			#size-cells = <1>;
-
-			partition0@0 {
-				label = "kernel";
-				reg = <0x00000000 0x1000000>;
-			};
-
-			partition1@1000000 {
-				label = "ubi";
-				reg = <0x1000000 0x1f000000>;
-			};
-		};
-	};
 };
 
 &qpic_bam {
